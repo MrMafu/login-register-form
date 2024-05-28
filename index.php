@@ -1,8 +1,6 @@
-<?php 
+<?php
 session_start();
-
-$username = (isset($_SESSION['username']) ? $_SESSION['username'] : "");
-$password = (isset($_SESSION['password']) ? $_SESSION['password'] : "");
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
 ?>
 
 <!DOCTYPE html>
@@ -14,20 +12,15 @@ $password = (isset($_SESSION['password']) ? $_SESSION['password'] : "");
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <?php 
-    if(!empty($username) && !empty($password)){
-        echo "<h1>Selamat datang!</h1>
-        <p>Username: $username </p>
-        <p>Password: $password </p>
-        <form action='control.php' method='post'>
-            <button type='submit' name='action' value='logout'>Logout</button>
-        </form>";
-    } else {
-        echo "<h1>Maaf, anda belum login</h1>
-        <h4>Klik tombol di bawah untuk login</h4>
-        <a href='login.php'><button>Login</button></a>
-        <h4>Belum punya akun? <a href='register.php'>Register</a></h4>";
-    }
-    ?>
+    <?php if (!empty($username)): ?>
+        <h1>Welcome, <?php echo htmlspecialchars($username); ?></h1>
+        <form action="control.php" method="post">
+            <button type="submit" name="action" value="logout">Logout</button>
+        </form>
+    <?php else: ?>
+        <h1>You are not logged in</h1>
+        <a href="login.php"><button>Login</button></a>
+        <a href="register.php"><button>Register</button></a>
+    <?php endif; ?>
 </body>
 </html>

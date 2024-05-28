@@ -1,6 +1,3 @@
-<?php 
-$msg = (isset($_GET['msg']) ? $_GET['msg']: "");
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,12 +9,11 @@ $msg = (isset($_GET['msg']) ? $_GET['msg']: "");
 <body>
     <a href="index.php"><button>Home</button></a>
     <h1>Login</h1>
-    <form class="field" action="./control.php" method="post">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
+    <form class="field" action="control.php" method="post">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button type="submit" name="action" value="login">Login</button>
+        <h4>Don't have an account? <a href="register.php">Register</a></h4>
     </form>
-    <?= (!empty($msg) ? "<h2>Error: $msg</h2>" : "") ?>
-    <h4>Belum punya akun? <a href="register.php">Register</a></h4>
 </body>
 </html>

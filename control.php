@@ -1,39 +1,61 @@
 <?php
 session_start();
+include 'db.php';
 
-$link = mysqli_connect('localhost','root','');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = $_POST['action'];
 
-mysqli_select_db($link, "form");
+    if ($action == 'register') {
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
 
-$username = $_POST['username'];
-$password = $_POST['password'];
-$action = $_POST['action'];
+        if (!empty($username) && !empty($password)) {
+            $username = mysqli_real_escape_string($conn, $username);
+            $password = mysqli_real_escape_string($conn, $password);
 
-if (isset($action)) {
-    if ($action === 'login') {
-        $sql = mysqli_query($link, "SELECT * FROM user WHERE `username` = '$username' AND `password` = '$password'");
-        if ($result_total = mysqli_num_rows($sql) === 0) {
-            header('Location: login.php?msg=Username%20atau%20Password%20salah!!');
-            exit();
+            $query = "INSERT INTO user (username, password) VALUES ('$username', '$password')";
+            if (mysqli_query($conn, $query)) {
+                header("Location: index.php");
+            } else {
+                echo "Error: " . mysqli_error($conn);
+            }
         } else {
-            $_SESSION['username'] = $username;
-            $_SESSION['password'] = $password;
-            header('Location: index.php');
-            exit();
+            echo "Username and Password cannot be empty!";
         }
     }
-    if ($action === 'register') {
-        $sql = mysqli_query($link, "INSERT INTO user (`username`,`password`) VALUES ('$username', '$password')");
-        if (!$sql) {
-            echo "Gagal menambahkan data ke dalam database";
+
+    if ($action == 'login') {
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
+
+        if (!empty($username) && !empty($password)) {
+            $username = mysqli_real_escape_string($conn, $username);
+            
+            $query = "SELECT password FROM user WHERE username='$username'";
+            $result = mysqli_query($conn, $query);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                if ($password == $row['password']) {
+                    $_SESSION['username'] = $username;
+                    header("Location: index.php");
+                    exit;
+                } else {
+                    echo "Invalid username or password!";
+                }
+            } else {
+                echo "Invalid username or password!";
+            }
+        } else {
+            echo "Username and Password cannot be empty!";
         }
-        header('Location: login.php');
-        exit();
     }
-    if ($action === 'logout') {
+
+    if ($action == 'logout') {
+        session_unset();
         session_destroy();
-        header('Location: index.php');
-        exit();
+        header("Location: index.php");
+        exit;
     }
 }
 ?>
